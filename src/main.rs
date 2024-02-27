@@ -11,12 +11,12 @@ fn main() {
 
     let tokens: Vec<Token> = match Token::tokenize(&string) {
         Ok(c) => c,
-        Err(_) => vec![],
+        Err(c) => {println!("{}", c); exit(1)},
     };
 
     let parsed: Token = match parse(&tokens) {
-        Some(x) => x,
-        None => {println!("Error"); exit(1)}
+        Ok(x) => x,
+        Err(x) => {println!("Error (Check for unmatched parentheses or hanging operators) {}", x); exit(1)}
     };
 
     println!("{}", parsed.lexeme);

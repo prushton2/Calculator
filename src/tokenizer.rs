@@ -14,7 +14,8 @@ pub enum TokenType {
     Number,
     Exponent,
     Semicolon,
-    Equals
+    Equals,
+    Error
 }
 
 #[derive(Clone)]
@@ -35,6 +36,11 @@ impl Token {
             
             if is_token.is_some() {
                 let token = is_token.unwrap();
+                
+                if token.0.token == TokenType::Error {
+                    return Err(format!("Invalid Character {}", token.0.lexeme));
+                }
+
                 i += token.1.clone();
                 tokens.push(token.0.clone());
             } else {
@@ -53,12 +59,12 @@ impl Token {
             return None;
         }
 
-        let single_char = Regex::new(r"^(\(|\)|\+|-|\*|\/|;|=|\^)").unwrap().find(string);
+        let single_char = Regex::new(r"^(\(|\)|\+|-|\*|\/|;|=|\^|\{|\}|\[|\])").unwrap().find(string);
 
         if single_char.is_some() {
             let token = match &string[0..1] {
-                "(" => TokenType::OpenParen,
-                ")" => TokenType::CloseParen,
+                "(" | "{" | "[" => TokenType::OpenParen,
+                ")" | "}" | "]" => TokenType::CloseParen,
                 "+" => TokenType::Plus,
                 "-" => TokenType::Minus,
                 "*" => TokenType::Multiply,
@@ -85,6 +91,9 @@ impl Token {
             }, number.as_str().len() ));
         }
 
-        return None;
+        return Some(( Token {
+            token: TokenType::Error,
+            lexeme: (&string[0..1]).to_string()
+        }, 1));
     }
 }

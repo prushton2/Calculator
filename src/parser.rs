@@ -1,25 +1,27 @@
 use crate::tokenizer::{TokenType, Token};
 
-pub fn parse(tokens_imm: &Vec<Token>) -> Option<Token> {
+pub fn parse(tokens_imm: &Vec<Token>) -> Result<Token, String> {
     let mut tokens = tokens_imm.clone();
     
     let mut prev_len = tokens.len();
 
     while tokens.len() > 1 {
+        insert_mult(&mut tokens);
         parse_parens(&mut tokens);
         parse_exponents(&mut tokens);
         parse_mult(&mut tokens);
         parse_plus(&mut tokens);
         
-        //this detects infinite loops and returns none when detected
-        if prev_len == tokens.len() {
-            return None;
-        }
+        if prev_len == tokens.len() {  //if the length of the previous and current vector are the
+                                       //same, nothing has happened. This means nothing will ever
+                                       //happen and therefore an infinite loop
+            return Err("Loop Detected".to_string());
+        }   
         prev_len = tokens.len();
     }
 
 
-    return Some(tokens[0].clone());
+    return Ok(tokens[0].clone());
 }
 
 
@@ -34,6 +36,18 @@ fn parse_parens(tokens: &mut Vec<Token>) {
             return;
         }
     } 
+}
+
+fn insert_mult(tokens: &mut Vec<Token>) {
+    for i in 0..tokens.len()-1 {
+        if tokens[i].token == TokenType::Number &&
+           tokens[i+1].token == TokenType::Number {
+            
+            tokens.insert(i+1, Token{token: TokenType::Multiply, lexeme: String::from("*")});
+            return;
+        }
+    }
+
 }
 
 fn parse_exponents(tokens: &mut Vec<Token>) {
