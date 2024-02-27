@@ -2,13 +2,20 @@ use crate::tokenizer::{TokenType, Token};
 
 pub fn parse(tokens_imm: &Vec<Token>) -> Option<Token> {
     let mut tokens = tokens_imm.clone();
-    let mut counter = 100;
-    while counter > 1 {
+    
+    let mut prev_len = tokens.len();
+
+    while tokens.len() > 1 {
         parse_parens(&mut tokens);
         parse_exponents(&mut tokens);
         parse_mult(&mut tokens);
         parse_plus(&mut tokens);
-        counter -= 1;
+        
+        //this detects infinite loops and returns none when detected
+        if prev_len == tokens.len() {
+            return None;
+        }
+        prev_len = tokens.len();
     }
 
 

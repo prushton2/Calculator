@@ -6,7 +6,12 @@ use crate::parser::{parse};
 use crate::tokenizer::{Token};
 
 fn main() {
-    let string: String = String::from("(12.32 + 32.333^2 * (1+3))");
+    let args: Vec<String> = std::env::args().collect();
+    let string: String = args[1..].join(" ");
+
+ //   println!("{}", string);
+
+ //   let string: String = String::from("(12.32 + 32.333^2 * (1+3))");
 
     let tokens: Vec<Token> = match Token::tokenize(&string) {
         Ok(c) => c,
@@ -18,5 +23,5 @@ fn main() {
         None => {println!("Error"); exit(1)}
     };
 
-    println!("Answer: {}", parsed.lexeme);
+    println!("{}", parsed.lexeme);
 }
