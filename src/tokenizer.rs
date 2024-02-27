@@ -75,10 +75,10 @@ impl Token {
                     }, 1));
         }
 
-        let numberRegex: Option<Match<'_>> = Regex::new(r"^[0-9][0-9]*(\.|)[0-9]*").unwrap().find(string);
+        let number_regex: Option<Match<'_>> = Regex::new(r"^[0-9][0-9]*(\.|)[0-9]*").unwrap().find(string);
         
-        if numberRegex.is_some() {
-            let number = numberRegex.unwrap();
+        if number_regex.is_some() {
+            let number = number_regex.unwrap();
             return Some(( Token{
                 token: TokenType::Number,
                 lexeme: number.as_str().to_string(),

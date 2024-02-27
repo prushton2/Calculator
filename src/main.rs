@@ -14,7 +14,7 @@ fn main() {
         Err(_) => vec![],
     };
 
-    let parsed: Token = match parser::parse(&tokens) {
+    let parsed: Token = match parse(&tokens) {
         Some(x) => x,
         None => {println!("Error"); exit(1)}
     };
